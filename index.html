@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>1학년 3반 수행평가 계획표</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky month tabs over a single-column list of task rows; tapping a row opens its evaluation detail inline. */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --surface-2:#eef1f5; --line:#d9dee6;
+  --fg:#18212c; --muted:#5b6675; --accent:#1d5f8f; --accent-soft:#dfeaf4; --accent-fg:#ffffff;
+  --warn:#8a5a00; --warn-soft:#fbefd2; --done:#6a7482; --live:#14733f; --live-soft:#d9f0e2;
+  --exam:#b4372f; --exam-soft:#f9e1de;
+  --font:'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10161d; --surface:#18202a; --surface-2:#202a36; --line:#2c3846;
+    --fg:#e6ebf1; --muted:#9aa6b5; --accent:#7ab6e6; --accent-soft:#1f3347; --accent-fg:#0c1722;
+    --warn:#f0c46a; --warn-soft:#3a2f14; --done:#8793a3; --live:#6ed49b; --live-soft:#173626;
+    --exam:#f08a82; --exam-soft:#43211f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10161d; --surface:#18202a; --surface-2:#202a36; --line:#2c3846;
+  --fg:#e6ebf1; --muted:#9aa6b5; --accent:#7ab6e6; --accent-soft:#1f3347; --accent-fg:#0c1722;
+  --warn:#f0c46a; --warn-soft:#3a2f14; --done:#8793a3; --live:#6ed49b; --live-soft:#173626;
+  --exam:#f08a82; --exam-soft:#43211f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--font); font-size:15px; line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-block:20px 40px; word-break:keep-all; overflow-wrap:anywhere;
+}
+.wrap{max-width:720px;margin:0 auto}
+header h1{font-size:1.5rem;line-height:1.25;margin:0 0 4px;font-weight:700;text-wrap:balance}
+header p{margin:0;color:var(--muted);font-size:.9rem}
+.note{
+  margin:16px 0 0;padding:12px 14px;background:var(--surface);border:1px solid var(--line);
+  border-radius:8px;font-size:.84rem;color:var(--muted)
+}
+.note b{color:var(--fg);font-weight:600}
+.cautions summary{cursor:pointer;font-weight:600;color:var(--fg);font-size:.88rem;min-height:24px}
+.cautions summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cautions ul{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.dday{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.dd-row{display:flex;align-items:center;gap:16px}
+.dd-num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:2.4rem;font-weight:500;line-height:1;color:var(--exam);white-space:nowrap}
+.dd-info{min-width:0;display:flex;flex-direction:column;gap:2px}
+.dd-label{font-size:.76rem;color:var(--muted);font-weight:600;letter-spacing:.04em}
+.dd-date{font-weight:600;font-size:.98rem}
+.dd-sub{font-size:.78rem;color:var(--muted)}
+.cal-btn{font:inherit;font-weight:600;font-size:.9rem;color:var(--accent);background:var(--accent-soft);border:0;border-radius:8px;padding:10px 12px;min-height:42px;cursor:pointer;width:100%}
+.cal-btn:focus-visible,.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cal{margin-top:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px 14px}
+.cal-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.cal-tabs::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;font:inherit;font-size:.84rem;font-weight:500;color:var(--muted);background:var(--surface-2);border:0;border-radius:999px;padding:5px 14px;min-height:34px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 8px;margin:12px 0 4px}
+.cal-list{list-style:none;margin:4px 0 0;padding:0}
+.cal-row{display:grid;grid-template-columns:78px minmax(0,1fr) auto;gap:2px 10px;align-items:start;padding:9px 0;border-top:1px solid var(--line)}
+.cal-row:first-child{border-top:0}
+.cal-date{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.84rem;color:var(--muted)}
+.cal-date b{color:var(--fg);font-weight:500}
+.cal-lab{font-size:.92rem}
+.cal-row.past .cal-lab,.cal-row.past .cal-date b{color:var(--muted)}
+.kind{font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.kind.exam{background:var(--exam-soft);color:var(--exam)}
+.kind.off{background:var(--live-soft);color:var(--live)}
+.kind.swap{background:var(--warn-soft);color:var(--warn)}
+.kind.event{background:var(--surface-2);color:var(--muted)}
+.cal-views{display:flex;gap:6px;margin-top:10px}
+.mgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-top:12px}
+.dow{text-align:center;font-size:.72rem;font-weight:600;color:var(--muted);padding:2px 0}
+.dow.sun{color:var(--exam)}
+.dow.sat{color:var(--accent)}
+.cell{min-height:52px;min-width:0;border-radius:8px;padding:5px 3px;display:flex;flex-direction:column;align-items:center;gap:3px;font:inherit;color:var(--fg);background:transparent;border:1px solid transparent;text-align:center}
+button.cell{cursor:pointer}
+button.cell:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.cell .dn{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.82rem}
+.cell.sun .dn{color:var(--exam)}
+.cell.sat .dn{color:var(--accent)}
+.cell.past .dn{color:var(--muted)}
+.cell.today{border-color:var(--accent)}
+.cell.has.k-exam{background:var(--exam-soft)}
+.cell.has.k-off{background:var(--live-soft)}
+.cell.has.k-swap{background:var(--warn-soft)}
+.cell.has.k-event{background:var(--surface-2)}
+.cell.sel{border-color:var(--fg)}
+.dots{display:flex;gap:3px;min-height:6px}
+.dot2{width:6px;height:6px;border-radius:50%;display:block}
+.dot2.exam{background:var(--exam)}
+.dot2.off{background:var(--live)}
+.dot2.swap{background:var(--warn)}
+.dot2.event{background:var(--muted)}
+.clab{display:none;max-width:100%;font-size:.68rem;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (min-width:560px){.clab{display:block}.cell{min-height:66px}}
+.detail{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.det-h{font-weight:600;font-size:.9rem;margin-bottom:4px;display:flex;align-items:center}
+.det-r{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:5px 0;font-size:.92rem}
+.mk{font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:5px;background:var(--accent);color:var(--accent-fg);margin-left:6px;white-space:nowrap}
+.seg{display:flex;margin-top:16px;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px}
+.seg-btn{
+  flex:1;font:inherit;font-size:.9rem;font-weight:600;color:var(--muted);background:none;border:0;
+  border-radius:8px;padding:8px 10px;min-height:38px;cursor:pointer
+}
+.seg-btn[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.seg-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sum{font-size:.82rem;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:10px}
+.tabs{
+  position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; background:var(--bg);
+  display:flex; gap:6px; overflow-x:auto; padding:12px 0 10px; margin-top:8px;
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top, 0px);background:var(--bg);z-index:10}
+.tab{
+  flex:0 0 auto; font:inherit; font-size:.88rem; font-weight:500; color:var(--muted);
+  background:var(--surface); border:1px solid var(--line); border-radius:999px;
+  padding:6px 14px; cursor:pointer; min-height:36px;
+}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.tab .n{font-family:var(--mono);font-size:.72rem;margin-left:5px;opacity:.75}
+.tab:focus-visible,.card-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.today{font-size:.8rem;color:var(--muted);margin:2px 0 10px}
+.group-title{
+  font-size:.78rem;letter-spacing:.08em;color:var(--muted);font-weight:600;
+  margin:22px 0 8px;display:flex;align-items:center;gap:10px
+}
+.group-title::after{content:"";flex:1;height:1px;background:var(--line)}
+.list{display:flex;flex-direction:column;gap:8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.card.past{background:transparent}
+.card-btn{
+  width:100%; text-align:left; font:inherit; color:inherit; background:none; border:0;
+  padding:12px 14px; cursor:pointer; display:grid; grid-template-columns:1fr auto; gap:4px 10px; align-items:start;
+}
+.subj{display:flex;align-items:center;gap:7px;font-size:.8rem;font-weight:600;color:var(--muted)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.ttl{grid-column:1;font-weight:600;font-size:.98rem;line-height:1.4;min-width:0}
+.card.past .ttl{color:var(--muted)}
+.meta{grid-column:1;display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.8rem;color:var(--muted)}
+.meta span{white-space:nowrap}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.side{grid-column:2;grid-row:1 / span 3;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.pill{font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.pill.live{background:var(--live-soft);color:var(--live)}
+.pill.soon{background:var(--accent-soft);color:var(--accent)}
+.pill.done{background:var(--surface-2);color:var(--done)}
+.pill.flag{background:var(--warn-soft);color:var(--warn)}
+.chev{width:18px;height:18px;color:var(--muted);transition:transform .15s}
+.card-btn[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.panel{padding:2px 14px 16px;border-top:1px solid var(--line);background:var(--surface)}
+.panel h3{font-size:.74rem;letter-spacing:.06em;color:var(--muted);font-weight:600;margin:16px 0 6px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-top:14px}
+.fact{background:var(--surface-2);border-radius:8px;padding:8px 10px}
+.fact small{display:block;font-size:.7rem;color:var(--muted)}
+.fact strong{font-size:.92rem;font-weight:600}
+.panel ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px}
+.panel li::marker{color:var(--muted)}
+.codes{display:flex;flex-wrap:wrap;gap:6px}
+.code{font-family:var(--mono);font-size:.76rem;background:var(--surface-2);border-radius:5px;padding:2px 7px}
+.panel .warn{margin-top:14px;background:var(--warn-soft);color:var(--fg);border-radius:8px;padding:10px 12px;font-size:.85rem}
+.panel .warn b{color:var(--warn)}
+.hint{font-size:.78rem;color:var(--muted);margin:2px 0 0}
+.empty{padding:28px 0;text-align:center;color:var(--muted)}
+footer{margin-top:28px;font-size:.78rem;color:var(--muted)}
+@media (max-width:420px){ body{font-size:14.5px} .ttl{font-size:.95rem} }
+@media (prefers-reduced-motion:reduce){ .chev{transition:none} }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>1학년 3반 수행평가 계획표</h1>
+    <p>2026학년도 2학기</p>
+    <section class="dday" aria-label="기말고사 D-day">
+      <div class="dd-row">
+        <div class="dd-num" id="ddNum">D-52</div>
+        <div class="dd-info">
+          <div class="dd-label">기말고사까지</div>
+          <div class="dd-date">12월 8일(화) ~ 14일(월)</div>
+          <div class="dd-sub" id="ddSub">시험일 5일 · 12/8 9 10 11 14</div>
+        </div>
+      </div>
+      <button type="button" class="cal-btn" id="calBtn" aria-expanded="false" aria-controls="calPanel">학사일정 보기</button>
+    </section>
+    <section class="cal" id="calPanel" aria-label="2학기 학사일정" hidden>
+      <div class="cal-tabs" id="calTabs" role="group" aria-label="월 선택"></div>
+      <div class="cal-views" id="calViews" role="group" aria-label="보기 방식"></div>
+      <div class="legend"><span class="kind exam">시험</span><span class="kind off">휴일·휴업</span><span class="kind event">행사</span><span class="kind swap">수업 변경</span></div>
+      <div class="mgrid" id="calGrid"></div>
+      <div class="detail" id="calDetail" aria-live="polite"></div>
+      <ul class="cal-list" id="calList" hidden></ul>
+    </section>
+    <div class="note"><b>비공식 정리입니다</b> 학교가 공시한 평가계획서를 정리한 자료예요. 일정과 기준은 바뀔 수 있으니 <b>선생님 공지가 항상 우선</b>입니다. 서로 다르게 적힌 일정은 “일정 확인”으로 표시했어요.</div>
+    <details class="note cautions" open>
+      <summary>이용할 때 주의할 점</summary>
+      <ul>
+        <li><b>점수 기준표가 아닙니다.</b> 공시된 계획서에는 상·중·하 채점 기준표가 없고, 과제별 평가 요소와 성취기준, 배점만 적혀 있어요. 세부 채점 기준은 담당 선생님 안내를 확인하세요.</li>
+        <li><b>일정은 월 단위로만 공시됩니다.</b> 정확한 날짜와 수업 시간은 선생님 공지를 따르세요. 진도표와 평가 시기가 다르게 적힌 과제는 “일정 확인”으로 표시했습니다.</li>
+        <li><b>일부 항목은 공시 표기가 불완전합니다.</b> 수학은 과제별 배점 없이 합계(40점)만 있고, 통합과학은 성취기준이 두 과제에 함께 적혀 있어 내용에 맞춰 나눴어요.</li>
+      </ul>
+    </details>
+  </header>
+
+  <div class="seg" role="group" aria-label="보기 방식">
+    <button type="button" class="seg-btn" data-mode="month" aria-pressed="true">월별 보기</button>
+    <button type="button" class="seg-btn" data-mode="subject" aria-pressed="false">과목별 보기</button>
+  </div>
+  <nav class="tabs" role="tablist" id="tabs" aria-label="월 또는 과목 선택"></nav>
+  <div class="today" id="today"></div>
+  <main id="out"></main>
+
+  <footer>출처: 진명여자고등학교 2026학년도 2학기 정보 공시용 교수학습 및 평가계획서(1학년)와 2026학년도 학사일정표(2학기). 계획은 학사 운영에 따라 변경될 수 있습니다. 시기는 월 단위로만 공시되어 있습니다.</footer>
+</div>
+
+<script>
+/* 과목 색 */
+var SUBJ = {
+  '미술':'#c0568a','국어':'#d0673a','수학':'#3b78c4','영어':'#2f9a8f','통합사회':'#a1862a',
+  '통합과학':'#6b5bc9','한국사':'#8a6a4a','과학탐구실험2':'#3d9a4f','체육2':'#c4423f'
+};
+
+/* s/e: 시작·끝 월, always: 상시 */
+var T = [
+ {id:'art1',subj:'미술',title:'마음 속 컬러테라피 (색채심리)',s:8,e:9,when:'8~9월',pts:'30점',ratio:'30%',
+  codes:['[12미01-02]','[12미02-01]'],
+  items:['이너사이드 컬러진단지 작성','컬러테라피 작품계획서 작성','자화상 그리기','준비물 및 학습태도'],
+  class_:['컬러진단표·활동지 작성 후, 자기 내면의 색으로 자화상을 그릴 작품계획서를 설계','교사관찰: 컬러 진단 후 내면의 색들로 자화상을 표현하는 과정 평가','작품 제작: 계획서를 바탕으로 자기 모습·좋아하는 것 그리기','학생 자기평가: 컬러의 상징과 의미를 체험하고 자화상 그리기를 성찰']},
+ {id:'art2',subj:'미술',title:'서양미술의 이해 (근·현대미술사)',s:9,e:10,when:'9~10월',pts:'20점',ratio:'20%',
+  codes:['[12미03-01]'],
+  items:['교사 관찰평가','근·현대미술사 활동지 작성'],
+  class_:['근대~현대 미술사를 익히고, 색채심리를 작가 4명(고흐, 칼로, 허스트, 야요이)의 작품으로 분석해 활동지 작성','교사관찰: 작가가 활동했던 미술사를 살펴보고 활동지로 작성하는 과정','10월 4주에 2차 수행평가를 마무리하고 3차를 준비'],
+  note:'진도표상 9월 3주~10월 1주 수업에서 진행되고, 10월 4주에 마무리됩니다.'},
+ {id:'art3',subj:'미술',title:'작가의 삶을 통한 작품 이해와 자기성찰',s:10,e:12,when:'10~12월',pts:'50점',ratio:'50%',
+  codes:['[12미02-03]','[12미03-01]','[12미03-02]'],
+  items:['자아 성찰 및 동료 평가','토론 참여 및 감상 활동지 작성','진로 연계 패러디 작품 제작','수업 준비 및 수행 태도'],
+  class_:['작가의 삶과 작품을 다룬 동영상을 시청하고 맥락적 비평 토론의 원리와 방법을 익힘','4조(6~7명)로 나누어 원하는 작가 4명에 대한 토론을 파트별로 진행','교사관찰: 토론, 맥락적 비평 감상 활동지 작성, 명화 패러디 실기 과정','동료평가: 토론 중 경청하고 적절한 피드백을 주었는지','자기성찰평가: 토론을 통한 작가·작품 이해와 자기성찰 점검'],
+  note:'미술 수행평가 중 비중이 가장 큽니다(50%). 10월 5주~11월 4주 수업, 12월 1주에 마무리됩니다.'},
+
+ {id:'kor1',subj:'국어',title:'한국 문학의 계승과 변용: 작품 비교를 통한 한국 문학사 비평문 쓰기',s:10,e:11,when:'10~11월',pts:'20점',ratio:'20% (서·논술형)',
+  codes:['[10공국2-05-01]','[10공국2-05-02]'],
+  items:['작품의 시대·갈래와 공통 테마 파악하기','계승과 변용 비교·분석하기','작품 근거를 활용하여 종합 비평문 작성하기'],
+  class_:['1단원 한국 문학의 길: 현대 시·현대 소설 감상(10월 3~5주)','학습지 작성(개념 이해·문제 해결), 질문, 과제 부과','최소성취수준 예방지도(5분, 선행 지식 점검)']},
+ {id:'kor2',subj:'국어',title:'말하기의 재구성: 발표 평가와 상황별 응답하기',s:10,e:11,when:'10~11월',pts:'20점',ratio:'20% (서·논술형으로 표기)',
+  codes:['[10공국2-01-01]'],
+  items:['청중 분석하여 발표하기','내용 선정 및 조직하기','청중의 질문 의도에 맞게 답변하기'],
+  class_:['성취기준 [10공국2-01-01]은 진도표의 5단원 ‘소통하고 참여하라’에 있고, 12월 3~5주에 배치됨','11월 수업은 논증하는 글쓰기와 협상(교사관찰, 동료 간 피드백)'],
+  flag:'평가 시기(10~11월)와 발표 성취기준을 다루는 수업(12월 3~5주)이 다르게 적혀 있습니다. 실제 발표 일정은 선생님 공지로 확인하세요.'},
+
+ {id:'math1',subj:'수학',title:'수학으로 소통하기',s:0,e:0,always:1,when:'상시',pts:'3과제 합계 40점',ratio:'3과제 합계 40% (서·논술형 30%, 그 외 10%)',
+  codes:['[10공수2-01-01]~[10공수2-03-0]'],
+  items:['표현력 및 정보처리','추론 및 연결','문제해결력 및 의사소통'],
+  class_:['모둠협력·활동 중심 수업 중 교사관찰(문제를 해결하는 과정과 의사소통 과정)','동료평가·동료 간 피드백(모둠 내 발표 후), 자기평가','12월 3~5주 추수활동: 탐구학습·발표수업'],
+  flag:'과제별 배점은 공시되어 있지 않고 세 과제 합계(40점)만 있습니다. 성취기준 표기도 끝이 잘려 있습니다.'},
+ {id:'math2',subj:'수학',title:'실생활 문제로 수학적 추론하기',s:0,e:0,always:1,when:'상시',pts:'3과제 합계 40점',ratio:'3과제 합계 40% (서·논술형 30%, 그 외 10%)',
+  codes:['[10공수2-01-01]~[10공수2-03-0]'],
+  items:['표현력 및 정보처리','추론 및 연결','문제해결력 및 의사소통'],
+  class_:['도형의 이동·집합·함수 단원의 탐구학습, 활동 중심 수업에서 실생활 연결 문제 해결','학습지 작성(개념 이해·문제 해결), 형성평가, 자기평가'],
+  flag:'과제별 배점은 공시되어 있지 않고 세 과제 합계(40점)만 있습니다.'},
+ {id:'math3',subj:'수학',title:'자기주도 문제 해결 도전',s:0,e:0,always:1,when:'상시',pts:'3과제 합계 40점',ratio:'3과제 합계 40% (서·논술형 30%, 그 외 10%)',
+  codes:['[10공수2-01-01]~[10공수2-03-0]'],
+  items:['문제해결력'],
+  class_:['12월 3~5주 추수활동: 2학기 전반 학습 점검 및 심화 주제 탐구(탐구학습·발표수업)','동료 간 피드백, 동료평가'],
+  flag:'과제별 배점은 공시되어 있지 않고 세 과제 합계(40점)만 있습니다.'},
+
+ {id:'eng',subj:'영어',title:'삶에 필수적인 항목에 대해 쓰고 발표하기',s:10,e:10,when:'10월',pts:'40점',ratio:'40% (서·논술형 30%, 말하기 10%)',
+  codes:['[10공영2-02-04]','[10공영2-02-06]'],
+  items:['내용의 적절성 및 문법의 정확성','전달력 및 표현력'],
+  class_:['Lesson 2 From Tradition to Trend 수업 중 진행(10월 3~5주)','Step-by-Step Writing(협력 수업)과 Communication(활동중심 수업)','자기평가, 학습지, 퀴즈, 형성평가(독해 본문 어휘)'],
+  note:'글쓰기 30%와 말하기 10%로 나뉩니다.'},
+
+ {id:'soc1',subj:'통합사회',title:'진로 연계 법과 정책 제안하기',s:9,e:9,when:'9월',pts:'20점',ratio:'20% (서·논술형)',
+  codes:['[10통사2-01-02]'],
+  items:['주제 선정 및 진로 연계성','법·정책 제안의 구체성','예상되는 효과와 사회적 영향의 논리성'],
+  class_:['1단원 인권 보장과 헌법: 인간 존엄성과 헌법의 역할, 시민 참여 방안 탐구','교사관찰(문제 해결 과정·의사소통), 발표 후 동료 간 피드백']},
+ {id:'soc2',subj:'통합사회',title:'경제적, 사회적 환경의 변화를 고려한 자산 관리 포트폴리오 설계하기',s:10,e:10,when:'10월',pts:'20점',ratio:'20% (서·논술형)',
+  codes:['[10통사2-03-03]'],
+  items:['금융 자산의 특징 비교와 자산 관리 원칙 적용의 타당성','재무 목표를 고려한 금융 자산 구성의 적절성','경제적, 사회적 환경 변화를 고려한 포트폴리오 조정 및 근거 제시의 타당성'],
+  class_:['10월 3~5주: 금융 자산의 특징과 자산 관리 원칙으로 금융 생활 설계','자기평가(모둠활동 참여 태도 체크리스트), 포트폴리오 점검(학습지·모둠 활동지 누적 확인)']},
+
+ {id:'sci1',subj:'통합과학',title:'산·염기 중화 반응의 온도 변화 탐구 및 중화적정 실험',s:10,e:10,when:'10월',pts:'2과제 합계 40점',ratio:'2과제 합계 40% (서·논술형 30%, 그 외 10%)',
+  codes:['[10통과2-01-04]'],
+  items:['탐구 실험 수행','측정 및 기록','자료 해석','결론 도출'],
+  class_:['단원 1-2-2 산과 염기(10월 2~4주): 대표적인 산·염기 물질의 특징, 혼합 시 나타나는 중화 반응','학습지 작성, 형성평가 및 퀴즈, 자기평가','실험 방법과 준비물은 수업 시간 선생님 안내를 따르세요']},
+ {id:'sci2',subj:'통합과학',title:'과학기술의 발전이 사회에 미치는 영향 조사 및 인포그래픽 제작',s:10,e:10,when:'10월',pts:'2과제 합계 40점',ratio:'2과제 합계 40% (서·논술형 30%, 그 외 10%)',
+  codes:['[10통과2-03-03]'],
+  items:['자료 수집 및 분석 능력','자료에 근거한 과학적 추론','과학적 문제 해결 능력'],
+  class_:['단원 3-2-2 과학기술의 발전과 윤리: 인공지능 로봇·사물인터넷 등 과학기술을 인간 삶과 환경 개선에 활용하는 사례 조사','학습지 작성, 형성평가 및 퀴즈, 자기평가'],
+  flag:'성취기준 [10통과2-01-04]와 [10통과2-03-03]이 두 과제 칸에 함께 적혀 있어, 내용에 맞춰 과제별로 나눠 표시했습니다.'},
+
+ {id:'his1',subj:'한국사',title:'역사 도서 서평 쓰기 활동',s:10,e:10,when:'10월',pts:'20점',ratio:'20% (서·논술형)',
+  codes:['[10한사2-01-03]','[10한사2-01-04]','[10한사2-02-03]'],
+  items:['역사 사실 이해','역사 자료의 해석','역사 자료 이해 및 재구성','역사 자료의 분석과 종합 능력','역사 정보 활용'],
+  class_:['10월 3~5주: 서평 쓰기 활동과 글쓰기 활동, 모둠 협력 학습','최소성취수준 보장지도(3차시)','디지털 포트폴리오: 온라인 공유 플랫폼에 서평 소감을 올려 다른 학생들과 나눔','자기평가: 학습 과정·수행·결과·태도 점검']},
+ {id:'his2',subj:'한국사',title:'질문하는 역사가 (주제 탐색 및 질의 응답회)',s:11,e:11,when:'11월',pts:'20점',ratio:'20% (서·논술형 10%, 말하기 10%)',
+  codes:['[10한사2-01-01]','[10한사2-02-02]','[10한사2-03-01]'],
+  items:['역사 사실 이해','역사적 통찰력과 종합 능력','역사 정보 활용 및 의사소통','역사적 탐구심'],
+  class_:['11월 1~5주: 모둠 활동 및 글쓰기 활동, 주제 탐색 및 교차 질의 응답회','최소성취수준 보장지도(3차시)','형성평가 및 퀴즈, 자기평가(학습 내용과 역량 성찰)']},
+
+ {id:'lab1',subj:'과학탐구실험2',title:'일상 속 과학 이해하기',s:8,e:11,when:'8~11월',pts:'수행 100% 중 20%',ratio:'20%',
+  codes:['[10과탐2-01-01]','[10과탐2-01-03]','[10과탐2-02-01]','[10과탐2-02-02]'],
+  items:['우리 주위의 과학 탐색','우리 주변의 생물 조사','우리 주변의 첨단 과학기술 탐색(마이크로컨트롤러)','우리 주변의 첨단 과학기술 탐색(사물인터넷)'],
+  class_:['학기 내내 이어지는 학습지 작성(개념 이해 및 탐구 활동)','8월: 생활 속 과학, 유사 과학 탐구 / 10월: 마이크로컨트롤러 / 11월: 사물인터넷'],
+  note:'이 과목은 정기시험 없이 수행평가 100%이고, 서·논술형 60%, 그 외 40%로 구성됩니다.',noteLabel:'과목 구성'},
+ {id:'lab2',subj:'과학탐구실험2',title:'우리나라 생태계 탐구하기 (모둠)',s:9,e:9,when:'9월',pts:'수행 100% 중 40%',ratio:'40%',
+  codes:['[10과탐2-01-03]'],
+  items:['생태계 유형 탐사','생태계 특징 조사','생물다양성 보전 방안','생물 기초 정보 탐색','분류학적 위치','형태적 특징','생태적 특징','서식지 특징','생물 표현하기'],
+  class_:['9월 2~5주: 고유종과 외래종, 외래종이 생태계에 주는 영향 탐구(모둠활동)']},
+ {id:'lab3',subj:'과학탐구실험2',title:'태양전지를 이용한 태양광 발전의 효율을 높이는 방법 (모둠)',s:11,e:11,when:'11월',pts:'수행 100% 중 40%',ratio:'40%',
+  codes:['[10과탐2-02-02]'],
+  items:['태양전지의 효율을 높이는 방법','각도에 따른 전력 크기','연결 방법(직렬)에 따른 전력 크기','연결 방법(병렬)에 따른 전력 크기','태양광 발전','태양광 발전의 원리','전류의 이동'],
+  class_:['11월 4~5주: 센서를 활용한 창의적 아이디어 고안 수업에서 모둠활동으로 진행']},
+
+ {id:'pe1',subj:'체육2',title:'배드민턴 서비스 (롱·숏 서비스)',s:9,e:9,when:'9월',pts:'30점',ratio:'30%',
+  codes:['[12체육2-01-02]'],
+  items:['롱·숏 서비스 동작의 정확성 및 안정성'],
+  class_:['9월 1~4주: 배드민턴 기능·방법 학습, 시범 실습식·활동 중심 수업, 과제 연습','수행평가: 실기 수행, 자기평가(학습 내용과 역량 성찰)']},
+ {id:'pe2',subj:'체육2',title:'배드민턴 단식 경기 (반코트 랠리)',s:10,e:10,when:'10월',pts:'20점',ratio:'20%',
+  codes:['[12체육2-01-03]'],
+  items:['반코트에서 안정적인 랠리와 셔틀콕 조절 능력'],
+  class_:['10월 1주: 경기 전략을 경기 중에 적용하는 과정, 안전과 신체 위기 상황 대처','수행평가: 실기 수행, 자기평가'],
+  flag:'진도표에는 10월 1주 수업에 ‘수행평가: 실기 수행’이 표기되어 있습니다. 이미 지났을 수 있으니 진행 여부를 확인하세요.'},
+ {id:'pe3',subj:'체육2',title:'미적 표현 창작체조',s:11,e:11,when:'11월',pts:'20점',ratio:'20%',
+  codes:['[12체육2-03-03]'],
+  items:['창작체조의 동작 수행과 창의적 표현 능력'],
+  class_:['표현활동 단원: 미적 원리를 이해하고 표현 동작을 분석해 창의적으로 수행','동작의 순서와 정확성 평가, 수행평가: 실기 수행, 자기평가'],
+  flag:'평가 시기는 11월로 되어 있지만, 진도표에는 10월 4~5주(표현활동 실천하기)에 ‘수행평가: 실기 수행’이 표기되어 있습니다. 곧 시작될 수 있으니 선생님 공지를 확인하세요.'},
+ {id:'pe4',subj:'체육2',title:'상황 판단 농구 드리블',s:12,e:12,when:'12월',pts:'30점',ratio:'30%',
+  codes:['[12체육2-01-02]'],
+  items:['농구 드리블의 공 컨트롤과 수행 능력'],
+  class_:['농구 단원: 11월 1주~12월 1주 수업, 경기 전략을 경기 중에 적용하는 과정','수행평가: 실기 수행, 자기평가'],
+  flag:'평가 시기는 12월이지만, 진도표에는 11월 2~5주와 12월 1주에 ‘수행평가: 실기 수행’이 표기되어 있습니다.'}
+];
+
+var MTABS = [{k:'all',l:'전체'},{k:8,l:'8월'},{k:9,l:'9월'},{k:10,l:'10월'},{k:11,l:'11월'},{k:12,l:'12월'},{k:'always',l:'상시'}];
+var ORDER = ['국어','수학','영어','통합사회','통합과학','한국사','과학탐구실험2','미술','체육2'];
+var STABS = [{k:'all',l:'전체'}].concat(ORDER.map(function(s){return {k:s,l:s}}));
+var SUM = {
+  '국어':'정기시험 60% + 수행평가 40% (과제 2개)',
+  '수학':'정기시험 60% + 수행평가 40% (과제 3개, 상시)',
+  '영어':'정기시험 60% + 수행평가 40% (과제 1개)',
+  '통합사회':'정기시험 60% + 수행평가 40% (과제 2개)',
+  '통합과학':'정기시험 60% + 수행평가 40% (과제 2개)',
+  '한국사':'정기시험 60% + 수행평가 40% (과제 2개)',
+  '과학탐구실험2':'수행평가 100% (과제 3개, 정기시험 없음)',
+  '미술':'수행평가 100% (과제 3개, 정기시험 없음)',
+  '체육2':'수행평가 100% (과제 4개, 정기시험 없음)'
+};
+var now = new Date(), CM = now.getMonth()+1;
+var mode = 'month';
+var cur = (CM>=8 && CM<=12) ? CM : 'all';
+var open = {};
+function tabsNow(){return mode==='month'?MTABS:STABS}
+
+function status(t){
+  if(t.always) return {c:'soon',l:'상시'};
+  if(t.e < CM) return {c:'done',l:'종료'};
+  if(t.s <= CM) return {c:'live',l:'진행 중'};
+  return {c:'soon',l:'예정'};
+}
+function inTab(t,k){
+  if(k==='all') return true;
+  if(mode==='subject') return t.subj===k;
+  if(k==='always') return !!t.always;
+  return !t.always && t.s<=k && k<=t.e;
+}
+function li(a){return a.map(function(x){return '<li>'+x+'</li>'}).join('')}
+var CHEV='<svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"/></svg>';
+
+function card(t){
+  var st=status(t), isOpen=!!open[t.id];
+  var h='<div class="card'+(st.c==='done'?' past':'')+'">';
+  h+='<button class="card-btn" type="button" aria-expanded="'+isOpen+'" aria-controls="p-'+t.id+'" data-id="'+t.id+'">';
+  h+='<div class="subj" style="--c:'+SUBJ[t.subj]+'"><span class="dot"></span>'+t.subj+'</div>';
+  h+='<div class="ttl">'+t.title+'</div>';
+  h+='<div class="meta"><span>'+t.when+'</span><span class="mono">'+t.pts+'</span></div>';
+  h+='<div class="side"><span class="pill '+st.c+'">'+st.l+'</span>'+(t.flag?'<span class="pill flag">일정 확인</span>':'')+CHEV+'</div>';
+  h+='</button>';
+  h+='<div class="panel" id="p-'+t.id+'"'+(isOpen?'':' hidden')+'>';
+  h+='<div class="facts"><div class="fact"><small>시기</small><strong>'+t.when+'</strong></div><div class="fact"><small>배점</small><strong class="mono">'+t.pts+'</strong></div><div class="fact" style="grid-column:span 2"><small>반영 비율</small><strong>'+t.ratio+'</strong></div></div>';
+  h+='<h3>평가 요소 (평가 기준)</h3><ul>'+li(t.items)+'</ul>';
+  h+='<h3>성취기준</h3><div class="codes">'+t.codes.map(function(c){return '<span class="code">'+c+'</span>'}).join('')+'</div>';
+  h+='<h3>수업·평가 연계</h3><ul>'+li(t.class_)+'</ul>';
+  if(t.note) h+='<div class="warn"><b>'+(t.noteLabel||'참고')+'</b> '+t.note+'</div>';
+  if(t.flag) h+='<div class="warn"><b>확인 필요</b> '+t.flag+'</div>';
+  h+='</div></div>';
+  return h;
+}
+
+function render(){
+  var tabs=document.getElementById('tabs');
+  Array.prototype.forEach.call(document.querySelectorAll('.seg-btn'),function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-mode')===mode))});
+  tabs.innerHTML=tabsNow().map(function(x){
+    var n=T.filter(function(t){return inTab(t,x.k)}).length;
+    return '<button class="tab" role="tab" type="button" aria-selected="'+(String(x.k)===String(cur))+'" data-k="'+x.k+'">'+x.l+'<span class="n">'+n+'</span></button>';
+  }).join('');
+  var list=T.filter(function(t){return inTab(t,cur)});
+  list.sort(function(a,b){return (a.always?99:a.s)-(b.always?99:b.s)});
+  var out=document.getElementById('out'), h='';
+  if(!list.length){h='<div class="empty">해당하는 수행평가가 없습니다.</div>'}
+  else if(mode==='subject'){
+    if(cur==='all'){
+      ORDER.forEach(function(s){
+        var ls=list.filter(function(t){return t.subj===s});
+        h+='<div class="group-title">'+s+'</div><div class="list">'+ls.map(card).join('')+'</div>';
+      });
+    } else {
+      h='<div class="sum">'+SUM[cur]+'</div><div class="list">'+list.map(card).join('')+'</div>';
+    }
+  }
+  else if(cur==='all'){
+    var groups={};
+    list.forEach(function(t){var g=t.always?'상시':t.s+'월 시작';(groups[g]=groups[g]||[]).push(t)});
+    Object.keys(groups).forEach(function(g){h+='<div class="group-title">'+g+'</div><div class="list">'+groups[g].map(card).join('')+'</div>'});
+  } else {
+    h='<div class="list">'+list.map(card).join('')+'</div>';
+  }
+  out.innerHTML=h;
+  var lab;
+  if(mode==='subject') lab = cur==='all' ? '9개 과목 전체 '+T.length+'개 과제' : cur+' 수행평가 '+list.length+'개';
+  else lab = cur==='all' ? '9개 과목 전체 '+T.length+'개 과제' : (cur==='always'?'수학 과제는 기간이 정해지지 않은 상시 평가입니다':cur+'월에 걸친 과제');
+  document.getElementById('today').textContent=lab+' · 과제를 누르면 평가 요소와 기준이 열립니다';
+}
+
+document.addEventListener('click',function(e){
+  var sb=e.target.closest('.seg-btn');
+  if(sb){
+    var m=sb.getAttribute('data-mode');
+    if(m!==mode){mode=m;cur=(m==='month')?((CM>=8&&CM<=12)?CM:'all'):'all';render()}
+    return;
+  }
+  var tb=e.target.closest('.tab');
+  if(tb){var k=tb.getAttribute('data-k');cur=(mode==='month'&&k!=='all'&&k!=='always')?Number(k):k;render();return}
+  var cb=e.target.closest('.card-btn');
+  if(cb){
+    var id=cb.getAttribute('data-id'); open[id]=!open[id];
+    cb.setAttribute('aria-expanded',String(!!open[id]));
+    document.getElementById('p-'+id).hidden=!open[id];
+  }
+});
+/* ===== 기말고사 D-day · 학사일정 (학교 학사일정표 2학기, 1학년 해당분) ===== */
+var DAY=86400000, WD=['일','월','화','수','목','금','토'];
+var KIND={exam:'시험',off:'휴일·휴업',swap:'수업 변경',event:'행사'};
+function ymd(m,d){return Date.UTC(2026,m-1,d)}
+function kstToday(){
+  try{
+    var p=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()).split('-');
+    return Date.UTC(+p[0],+p[1]-1,+p[2]);
+  }catch(e){var n=new Date();return Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())}
+}
+var TODAY=kstToday();
+var CAL=[
+ [8,17,'대체휴일','off'],[8,18,'개학일','event'],[8,19,'소변검사','event'],[8,20,'동아리 활동 · 교내환경정화','event'],
+ [8,21,'안전점검 · 2학기 리더십캠프','event'],[8,24,'상담주간 · 생명존중교육','event'],[8,27,'동아리 활동 · 합동소방훈련','event'],
+ [9,2,'전국연합학력평가','exam'],[9,3,'동아리 활동','event'],[9,4,'안전점검','event'],[9,8,'수업공개의 날','event'],
+ [9,10,'동아리 활동','event'],[9,11,'백선제','event'],[9,17,'학교폭력예방교육 · 백선제 평가회','event'],
+ [9,22,'금요일 수업','swap'],[9,24,'추석연휴','off'],[9,25,'추석','off'],[9,26,'추석연휴','off'],
+ [10,3,'개천절','off'],[10,5,'대체휴일','off'],[10,6,'중간고사','exam'],[10,7,'중간고사','exam'],[10,8,'중간고사','exam'],
+ [10,9,'한글날','off'],[10,12,'중간고사 · 안전점검 · 학교폭력예방주간 캠페인(12~16일)','exam'],[10,13,'중간고사','exam'],
+ [10,15,'동아리 활동','event'],[10,20,'전국연합학력평가','exam'],[10,22,'알뜰시장 · 보수연','event'],
+ [10,29,'금요일 수업','swap'],[10,30,'진로 체험의 날(학과 멘토링) · 목요일 수업','event'],
+ [11,4,'안전점검','event'],[11,12,'교내환경정화','event'],[11,19,'재량휴업일','off'],[11,20,'재량휴업일','off'],
+ [11,26,'동아리 활동','event'],[11,27,'진로포트폴리오 제출마감','event'],
+ [12,4,'안전점검','event'],[12,7,'화요일 수업','swap'],[12,8,'기말고사','exam'],[12,9,'기말고사','exam'],
+ [12,10,'기말고사','exam'],[12,11,'기말고사','exam'],[12,14,'기말고사','exam'],[12,17,'연간동아리활동평가','event'],
+ [12,22,'금요일 수업','swap'],[12,24,'보수연 · 연간봉사활동평가','event'],[12,25,'성탄절','off'],[12,30,'방학일','off']
+];
+var calMonth=Math.min(12,Math.max(8,CM));
+
+function renderDday(){
+  var s=ymd(12,8), e=ymd(12,14), num, sub;
+  if(TODAY<s){ num='D-'+Math.round((s-TODAY)/DAY); sub='시험일 5일 · 12/8 9 10 11 14'; }
+  else if(TODAY<=e){ num='시험 중'; sub='12/14(월)까지'; }
+  else { num='종료'; sub='기말고사가 끝났어요'; }
+  document.getElementById('ddNum').textContent=num;
+  document.getElementById('ddSub').textContent=sub;
+}
+
+function renderCalList(){
+  var nextIdx=-1, i;
+  for(i=0;i<CAL.length;i++){ if(ymd(CAL[i][0],CAL[i][1])>TODAY){nextIdx=i;break} }
+  var h='';
+  for(i=0;i<CAL.length;i++){
+    var c=CAL[i]; if(c[0]!==calMonth) continue;
+    var t=ymd(c[0],c[1]), wd=new Date(t).getUTCDay();
+    var mk = t===TODAY ? '<span class="mk">오늘</span>' : (i===nextIdx ? '<span class="mk">다음</span>' : '');
+    h+='<li class="cal-row'+(t<TODAY?' past':'')+'"><span class="cal-date"><b>'+c[0]+'/'+c[1]+'</b>('+WD[wd]+')</span>'
+      +'<span class="cal-lab">'+c[2]+mk+'</span><span class="kind '+c[3]+'">'+KIND[c[3]]+'</span></li>';
+  }
+  document.getElementById('calList').innerHTML=h;
+}
+
+var calView='grid', calSel=null;
+function evOf(m){var o={};CAL.forEach(function(c){if(c[0]===m){(o[c[1]]=o[c[1]]||[]).push(c)}});return o}
+function pickSel(ev){
+  var days=Object.keys(ev).map(Number).sort(function(a,b){return a-b});
+  for(var i=0;i<days.length;i++){ if(ymd(calMonth,days[i])>=TODAY) return days[i] }
+  return days.length?days[0]:null;
+}
+function renderCalGrid(){
+  var ev=evOf(calMonth);
+  if(calSel===null||!ev[calSel]) calSel=pickSel(ev);
+  var first=new Date(ymd(calMonth,1)).getUTCDay(), n=new Date(Date.UTC(2026,calMonth,0)).getUTCDate();
+  var h=WD.map(function(w,i){return '<div class="dow'+(i===0?' sun':(i===6?' sat':''))+'">'+w+'</div>'}).join('');
+  var b,d;
+  for(b=0;b<first;b++) h+='<div></div>';
+  for(d=1;d<=n;d++){
+    var es=ev[d], wd=(first+d-1)%7, t=ymd(calMonth,d);
+    var cls='cell'+(wd===0?' sun':(wd===6?' sat':''))+(t===TODAY?' today':'')+(t<TODAY?' past':'');
+    if(!es){ h+='<div class="'+cls+'"><span class="dn">'+d+'</span></div>'; continue }
+    var kinds=[]; es.forEach(function(c){ if(kinds.indexOf(c[3])<0) kinds.push(c[3]) });
+    var prim=kinds.indexOf('exam')>=0?'exam':(kinds.indexOf('off')>=0?'off':kinds[0]);
+    var al=calMonth+'월 '+d+'일 '+WD[wd]+'요일, '+es.map(function(c){return c[2]}).join(', ');
+    h+='<button type="button" class="'+cls+' has k-'+prim+(d===calSel?' sel':'')+'" data-day="'+d+'" aria-pressed="'+(d===calSel)+'" aria-label="'+al+'">'
+      +'<span class="dn">'+d+'</span><span class="dots">'+kinds.map(function(k){return '<i class="dot2 '+k+'"></i>'}).join('')+'</span>'
+      +'<span class="clab">'+es[0][2].split(' · ')[0]+'</span></button>';
+  }
+  document.getElementById('calGrid').innerHTML=h;
+  var dh='';
+  if(calSel!==null&&ev[calSel]){
+    var ts=ymd(calMonth,calSel), diff=Math.round((ts-TODAY)/DAY);
+    var rel=diff===0?'오늘':(diff>0?'D-'+diff:'D+'+(-diff));
+    dh='<div class="det-h">'+calMonth+'월 '+calSel+'일('+WD[new Date(ts).getUTCDay()]+')<span class="mk">'+rel+'</span></div>'
+      +ev[calSel].map(function(c){return '<div class="det-r"><span>'+c[2]+'</span><span class="kind '+c[3]+'">'+KIND[c[3]]+'</span></div>'}).join('');
+  } else { dh='<div class="det-h">이 달에는 표시할 학교 일정이 없어요</div>' }
+  document.getElementById('calDetail').innerHTML=dh;
+}
+function renderCal(){
+  document.getElementById('calTabs').innerHTML=[8,9,10,11,12].map(function(m){
+    return '<button type="button" class="chip" data-cm="'+m+'" aria-pressed="'+(m===calMonth)+'">'+m+'월</button>';
+  }).join('');
+  document.getElementById('calViews').innerHTML=[['grid','달력'],['list','목록']].map(function(v){
+    return '<button type="button" class="chip" data-cv="'+v[0]+'" aria-pressed="'+(v[0]===calView)+'">'+v[1]+'</button>';
+  }).join('');
+  var g=calView==='grid';
+  document.getElementById('calGrid').hidden=!g;
+  document.getElementById('calDetail').hidden=!g;
+  document.getElementById('calList').hidden=g;
+  if(g) renderCalGrid(); else renderCalList();
+}
+
+document.addEventListener('click',function(e){
+  var cb=e.target.closest('#calBtn');
+  if(cb){
+    var p=document.getElementById('calPanel'), willOpen=p.hidden;
+    p.hidden=!willOpen; cb.setAttribute('aria-expanded',String(willOpen));
+    cb.textContent=willOpen?'학사일정 닫기':'학사일정 보기';
+    if(willOpen) renderCal();
+    return;
+  }
+  var ch=e.target.closest('[data-cm]');
+  if(ch){calMonth=Number(ch.getAttribute('data-cm'));calSel=null;renderCal();return}
+  var cv=e.target.closest('[data-cv]');
+  if(cv){calView=cv.getAttribute('data-cv');renderCal();return}
+  var cd=e.target.closest('[data-day]');
+  if(cd){calSel=Number(cd.getAttribute('data-day'));renderCal()}
+});
+renderDday();
+render();
+</script>
+</body>
+</html>
